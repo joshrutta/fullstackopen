@@ -1,4 +1,5 @@
-import { React, useState } from 'react'
+import { useState } from 'react'
+import personService from '../services/person'
 
 const isValidPhoneNumberString = (candidatePhoneString) => {
     const phoneNumPattern = /^[0-9-]+$/
@@ -18,22 +19,43 @@ const PersonForm = ({ persons, setPersons }) => {
         return names.includes(personObject.name)
     }
 
+    const dupPersonId = (personObject) => {
+        const names = persons.map(person => person.name)
+        const idx = names.indexOf(personObject.name)
+        return persons[idx].id;
+    }
+
     const addPerson = (event) => {
         console.log('add person called')
         event.preventDefault()
         const personObject = {
             name: newName,
             number: newNumber,
-            id: persons.length + 1
         }
         if (personInPhoneBook(personObject)) {
-            alert(`${newName} is already added to phonebook`)
+            if (
+                window.confirm(`${newName} is already added to phonebook,
+                                replace old number with new one?`)
+            ) {
+                const id = dupPersonId(personObject)
+                personService
+                    .update(id, personObject)
+                    .then(returnedPerson => {
+                        setPersons(persons.map(p => p.id !== id ? p : returnedPerson))
+                    })
+            }
         } else if (!isValidPhoneNumberString(newNumber)) {
             alert(`${newNumber} is invalid phone string`)
         } else {
-            setPersons(persons.concat(personObject))
-            setNewName('')
-            setNewNumber('')
+            personService
+                .create(personObject)
+                .then(
+                    returnedPerson => {
+                        setPersons(persons.concat(returnedPerson))
+                        setNewName('')
+                        setNewNumber('')
+                    }
+                )
         }
     }
 

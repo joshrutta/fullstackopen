@@ -16,7 +16,6 @@ const App = () => {
         }
       )
   }, [])
-  // console.log("countries.length: ", countries.length)
 
   const handleSearchQuery = (event) => setSearchQuery(event.target.value);
 
