@@ -9,6 +9,16 @@
       "name": "josh",
       "number": "123-123-1421",
       "id": 2
+    },
+    {
+      "name": "jamie lanister",
+      "number": "123-123-1234",
+      "id": 3
+    },
+    {
+      "name": "lord vader",
+      "number": "666-666-6666",
+      "id": 4
     }
   ]
 }

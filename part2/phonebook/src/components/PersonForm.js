@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import personService from '../services/person'
+import NotificationType from '../NotificationType'
 
 const isValidPhoneNumberString = (candidatePhoneString) => {
     const phoneNumPattern = /^[0-9-]+$/
     return phoneNumPattern.test(candidatePhoneString)
 }
 
-const PersonForm = ({ persons, setPersons }) => {
+const PersonForm = ({ persons, setPersons, setNotificationInfo }) => {
     const [newName, setNewName] = useState('')
     const [newNumber, setNewNumber] = useState('')
 
@@ -26,7 +27,6 @@ const PersonForm = ({ persons, setPersons }) => {
     }
 
     const addPerson = (event) => {
-        console.log('add person called')
         event.preventDefault()
         const personObject = {
             name: newName,
@@ -34,14 +34,24 @@ const PersonForm = ({ persons, setPersons }) => {
         }
         if (personInPhoneBook(personObject)) {
             if (
-                window.confirm(`${newName} is already added to phonebook,
-                                replace old number with new one?`)
+                window.confirm(`${newName} is already added to phonebook, replace old number with new one?`)
             ) {
                 const id = dupPersonId(personObject)
                 personService
                     .update(id, personObject)
                     .then(returnedPerson => {
                         setPersons(persons.map(p => p.id !== id ? p : returnedPerson))
+                    })
+                    .catch(error => {
+                        const message = `Information of ${personObject.name}
+                                         has already been removed from the server`;
+                        setNotificationInfo({
+                            message: message,
+                            notificationType: NotificationType.Error
+                        })
+                        setTimeout(() => {
+                            setNotificationInfo(null)
+                        }, 5000)
                     })
             }
         } else if (!isValidPhoneNumberString(newNumber)) {
@@ -54,6 +64,13 @@ const PersonForm = ({ persons, setPersons }) => {
                         setPersons(persons.concat(returnedPerson))
                         setNewName('')
                         setNewNumber('')
+                        setNotificationInfo({
+                            message: `Added ${returnedPerson.name}`,
+                            notificationType: NotificationType.Success
+                        })
+                        setTimeout(() => {
+                            setNotificationInfo(null)
+                        }, 5000)
                     }
                 )
         }
