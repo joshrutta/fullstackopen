@@ -43,10 +43,8 @@ const PersonForm = ({ persons, setPersons, setNotificationInfo }) => {
                         setPersons(persons.map(p => p.id !== id ? p : returnedPerson))
                     })
                     .catch(error => {
-                        const message = `Information of ${personObject.name}
-                                         has already been removed from the server`;
                         setNotificationInfo({
-                            message: message,
+                            message: error.response.data.error,
                             notificationType: NotificationType.Error
                         })
                         setTimeout(() => {
@@ -73,6 +71,16 @@ const PersonForm = ({ persons, setPersons, setNotificationInfo }) => {
                         }, 5000)
                     }
                 )
+                .catch(error => {
+                    const message = error.response.data.error;
+                    setNotificationInfo({
+                        message: message,
+                        notificationType: NotificationType.Error
+                    })
+                    setTimeout(() => {
+                        setNotificationInfo(null)
+                    }, 5000)
+                })
         }
     }
 
