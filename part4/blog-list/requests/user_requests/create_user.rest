@@ -1,0 +1,9 @@
+# POST https://fullstack-notes-app.fly.dev/api/users
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+    "username": "jo",
+    "name": "josh",
+    "password": "password"
+}
