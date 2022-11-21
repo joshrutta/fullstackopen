@@ -1,9 +1,10 @@
 POST http://localhost:3003/api/blogs
 # POST https://localhost:3001/api/blogs
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Impvc2giLCJpZCI6IjYzN2Q2NTg4YzJhZTJmNGExMTRhNGU4NiIsImlhdCI6MTY2OTI1MjY3MSwiZXhwIjoxNjY5MjU2MjcxfQ.C1SANdI9N5yP3wnb7vePJC6LpEWiaesCmGtSOji2ZhY
 
 {
-    "title": "2nd blog post",
+    "title": "blog post",
     "author": "StephenKing",
     "url": "ghostwriter.net",
     "likes": 23
