@@ -1,5 +1,5 @@
 import axios from 'axios'
-const baseUrl = '/api/notes'
+const baseUrl = '/api/blogs'
 
 let token = null
 
@@ -13,7 +13,7 @@ const getAll = async () => {
 }
 
 const create = async newObject => {
-    const config = {headers: { Authorization: token }}
+    const config = { headers: { Authorization: token } }
     const response = await axios.post(baseUrl, newObject, config)
     return response.data
 }
@@ -23,4 +23,4 @@ const update = async (id, newObject) => {
     return response.data
 }
 
-export default { getAll, create, update, setToken }
+export default {setToken, getAll, create, update}
