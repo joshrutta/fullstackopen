@@ -12,7 +12,7 @@ var user2Info
 const userSetUp = async (userName, name, password) => {
     var userId
     var authToken
-    newUser = {
+    const newUser = {
         username: userName,
         name: name,
         password: password
@@ -42,7 +42,6 @@ const userSetUp = async (userName, name, password) => {
 beforeAll(async () => {
     user1Info = await userSetUp('test_user', 'test_user', 'test_pass')
     user2Info = await userSetUp('test_user2', 'test_user2', 'test_pass2')
-
 }, 10000)
 
 // user teardown

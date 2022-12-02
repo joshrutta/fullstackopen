@@ -77,16 +77,6 @@ const App = (props) => {
       })
   }
 
-  const hook = () => {
-    noteService
-      .getAll()
-      .then(initialNotes => {
-        console.log('promise fulfilled')
-        setNotes(initialNotes)
-      })
-  }
-  useEffect(hook, [])
-
   const addNote = (event) => {
     event.preventDefault()
     const noteObject = {
