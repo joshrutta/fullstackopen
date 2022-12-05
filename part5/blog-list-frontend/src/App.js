@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
+import LoginForm from './components/LoginForm'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -62,26 +64,16 @@ const App = () => {
     }
 
     const loginForm = () => (
-        <form onSubmit={handleLogin}>
-            <div>
-                username
-                <input
-                    type="text"
-                    value={username}
-                    name="Username"
-                    onChange={({ target }) => setUsername(target.value)} />
-            </div>
-            <div>
-                password
-                <input
-                    type="password"
-                    value={password}
-                    name="Password"
-                    onChange={({ target }) => setPassword(target.value)} />
-            </div>
-            <button type="submit">login</button>
-        </form>
-    )
+        <Togglable buttonLabel='login'>
+            <LoginForm
+                username={username}
+                password={password}
+                handleUsernameChange={({ target }) => setUsername(target.value)}
+                handlePasswordChange={({ target }) => setPassword(target.value)}
+                handleLogin={handleLogin}
+            />
+        </Togglable>
+        )
 
     const handleCreateNewBlog = async (event) => {
         event.preventDefault()
@@ -155,10 +147,7 @@ const App = () => {
         <div>
             <Notification messageType={messageType} message={message} />
             {user === null ?
-                <div>
-                    <h2>Log in to application</h2>
-                    {loginForm()}
-                </div>
+                loginForm()
                 :
                 <div>
                     <h2>Blogs</h2>
@@ -173,7 +162,7 @@ const App = () => {
                     )}
 
                     <button onClick={() => {
-                        window.localStorage.removeItem('loggedNoteappUser')
+                        window.localStorage.removeItem('loggedBlogAppUser')
                         setUser(null)
                     }}>
                         logout
