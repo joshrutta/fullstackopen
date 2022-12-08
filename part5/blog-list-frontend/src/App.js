@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
+import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -16,10 +17,6 @@ const App = () => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
-    const [title, setTitle] = useState('')
-    const [author, setAuthor] = useState('')
-    const [url, setUrl] = useState('')
-
     useEffect(() => {
         const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
         if (loggedUserJSON) {
@@ -31,6 +28,7 @@ const App = () => {
 
     useEffect(() => {
         blogService.getAll().then(blogs => {
+            blogs.sort((b1, b2) => (b1.likes < b2.likes) ? 1 : -1)
             const blogsToRender = blogs.filter(blog => blog.user)//.filter(blog => blog.user === user.id)
             setBlogs(blogsToRender)
             // setBlogs(blogs)
@@ -75,19 +73,16 @@ const App = () => {
         </Togglable>
         )
 
-    const handleCreateNewBlog = async (event) => {
-        event.preventDefault()
-
-        const newBlog = { title, author, url }
-
+    const createNewBlog = async (blogObject) => {
         try {
-            const newlyAddedBlog = await blogService.create(newBlog)
+            blogFormRef.current.toggleVisibility()
+            const newlyAddedBlog = await blogService.create(blogObject)
             setBlogs(blogs.concat(newlyAddedBlog))
-            setMessage(`a new blog "${title}" by ${author} added`)
+            setMessage(`a new blog "${blogObject.title}" by ${blogObject.author} added`)
             setMessageType('success')
-            setTitle('')
-            setAuthor('')
-            setUrl('')
+            setTimeout(() => {
+                setMessage(null)
+            }, 5000)
         } catch (exception) {
             setMessageType('error')
             setMessage('Error adding new blog')
@@ -98,49 +93,53 @@ const App = () => {
     }
 
     const handleDeleteBlog = async (event, blogId) => {
+        const blogToBeDeleted = blogs.filter(blog => blog.id === blogId)[0]
+        if (window.confirm(`Remove "${blogToBeDeleted.title}" by ${blogToBeDeleted.author}?`)){
+            try {
+                await blogService.remove(blogId)
+                setBlogs(blogs.filter(blog => blog.id !== blogId))
+                setMessage(`a blog "${blogToBeDeleted.title}" by ${blogToBeDeleted.author} was deleted`)
+                setMessageType('success')
+                setTimeout(() => {
+                    setMessage(null)
+                }, 5000)
+            } catch (exception) {
+                setMessageType('error')
+                setMessage('Error deleting blog')
+                setTimeout(() => {
+                    setMessage(null)
+                }, 5000)
+            }
+        }
+    }
+
+    const handleLike = async (event, blogId) => {
         try {
-            const response = await blogService.remove(blogId)
-            console.log(response);
-            setBlogs(blogs.filter(blog => blog.id !== blogId))
-            setMessage(`a blog ${title} by ${author} was deleted`)
-            setMessageType('success')
+            const blogToBeUpdated = blogs.filter(blog => blog.id === blogId)[0]
+            const updatedBlog = { ...blogToBeUpdated, user: blogToBeUpdated.user._id,likes: blogToBeUpdated.likes + 1}
+            const {_id, ...updatedBlogExcludingId} = updatedBlog
+            const responseBlog = await blogService.update(blogId, updatedBlogExcludingId)
+            var blogsCopy = blogs.filter(blog => blog.id !== blogId)
+            blogsCopy = blogsCopy.concat(responseBlog)
+            blogsCopy.sort((b1, b2) => (b1.likes < b2.likes) ? 1 : -1)
+            setBlogs(blogsCopy)
         } catch (exception) {
             setMessageType('error')
-            setMessage('Error deleting blog')
+            setMessage('Error liking blog')
             setTimeout(() => {
                 setMessage(null)
             }, 5000)
         }
     }
 
+    const blogFormRef = useRef()
+
     const createNewBlogForm = () => (
-        <form onSubmit={handleCreateNewBlog}>
-            <div>
-                title:
-                <input
-                    type="text"
-                    value={title}
-                    name="Title"
-                    onChange={({ target }) => setTitle(target.value)} />
-            </div>
-            <div>
-                author:
-                <input
-                    type="text"
-                    value={author}
-                    name="Author"
-                    onChange={({ target }) => setAuthor(target.value)} />
-            </div>
-            <div>
-                url:
-                <input
-                    type="text"
-                    value={url}
-                    name="Url"
-                    onChange={({ target }) => setUrl(target.value)} />
-            </div>
-            <button type="submit">create</button>
-        </form>
+        <Togglable buttonLabel="new blog" ref={blogFormRef}>
+            <BlogForm
+                createNewBlog={createNewBlog}
+            />
+        </Togglable>
     )
 
     return (
@@ -154,11 +153,13 @@ const App = () => {
 
                     <p>{user.name} logged in</p>
 
-                    <h2>Create New</h2>
                     {createNewBlogForm()}
                     <br />
                     {blogs.map(blog =>
-                        <Blog key={blog.id} blog={blog} handleDeleteBlog={(event) => handleDeleteBlog(event, blog.id)} />
+                        <Blog key={blog.id} 
+                        blog={blog} 
+                        handleDeleteBlog={(event) => handleDeleteBlog(event, blog.id)}
+                        handleLike = {(event) => handleLike(event, blog.id)} />
                     )}
 
                     <button onClick={() => {
