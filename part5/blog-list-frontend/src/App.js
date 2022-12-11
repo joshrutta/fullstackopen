@@ -71,7 +71,7 @@ const App = () => {
                 handleLogin={handleLogin}
             />
         </Togglable>
-        )
+    )
 
     const createNewBlog = async (blogObject) => {
         try {
@@ -116,8 +116,9 @@ const App = () => {
     const handleLike = async (event, blogId) => {
         try {
             const blogToBeUpdated = blogs.filter(blog => blog.id === blogId)[0]
-            const updatedBlog = { ...blogToBeUpdated, user: blogToBeUpdated.user._id,likes: blogToBeUpdated.likes + 1}
-            const {_id, ...updatedBlogExcludingId} = updatedBlog
+            const updatedBlog = { ...blogToBeUpdated, user: blogToBeUpdated.user._id,likes: blogToBeUpdated.likes + 1 }
+            // eslint-disable-next-line no-unused-vars
+            const { _id, ...updatedBlogExcludingId } = updatedBlog
             const responseBlog = await blogService.update(blogId, updatedBlogExcludingId)
             var blogsCopy = blogs.filter(blog => blog.id !== blogId)
             blogsCopy = blogsCopy.concat(responseBlog)
@@ -156,10 +157,10 @@ const App = () => {
                     {createNewBlogForm()}
                     <br />
                     {blogs.map(blog =>
-                        <Blog key={blog.id} 
-                        blog={blog} 
-                        handleDeleteBlog={(event) => handleDeleteBlog(event, blog.id)}
-                        handleLike = {(event) => handleLike(event, blog.id)} />
+                        <Blog key={blog.id}
+                            blog={blog}
+                            handleDeleteBlog={(event) => handleDeleteBlog(event, blog.id)}
+                            handleLike = {(event) => handleLike(event, blog.id)} />
                     )}
 
                     <button onClick={() => {

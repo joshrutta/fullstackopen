@@ -21,8 +21,8 @@ const Blog = ({ blog, handleDeleteBlog, handleLike }) => {
 
     return (
         <div>
-            <div style={{...blogStyle, ...hideWhenVisible}}>
-                {blog.title} <button onClick={toggleExpand}>view</button> 
+            <div style={{ ...blogStyle, ...hideWhenVisible }}>
+                {blog.title} <button onClick={toggleExpand}>view</button>
             </div>
             <div style={{ ...blogStyle, ...showWhenVisible }}>
                 <div>

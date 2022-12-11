@@ -10,7 +10,7 @@ const Notification = ({ message, messageType }) => {
             </div>
         )
     }
-    
+
     if (messageType === 'success') {
         return (
             <div className='success'>
