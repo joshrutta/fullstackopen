@@ -146,11 +146,11 @@ const App = () => {
     return (
         <div>
             <Notification messageType={messageType} message={message} />
+            <h2>Blogs</h2>
             {user === null ?
                 loginForm()
                 :
                 <div>
-                    <h2>Blogs</h2>
 
                     <p>{user.name} logged in</p>
 
@@ -163,7 +163,7 @@ const App = () => {
                             handleLike = {(event) => handleLike(event, blog.id)} />
                     )}
 
-                    <button onClick={() => {
+                    <button id='logout-button' onClick={() => {
                         window.localStorage.removeItem('loggedBlogAppUser')
                         setUser(null)
                     }}>

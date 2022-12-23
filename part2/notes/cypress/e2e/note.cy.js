@@ -1,5 +1,5 @@
 describe('Note app', function () {
-    beforeEach(function () {
+    beforeEach(function() {
         cy.request('POST', 'http://localhost:3001/api/testing/reset')
         const user = {
             name: 'test user',
@@ -10,12 +10,12 @@ describe('Note app', function () {
         cy.visit('http://localhost:3000')
     })
 
-    it('front page can be opened', function () {
+    it('front page can be opened', function() {
         cy.contains('Notes')
         cy.contains('Note app, Department of Computer Science, University of Helsinki 2022')
     })
 
-    it('login form can be opened', function () {
+    it('login form can be opened', function() {
         cy.contains('login').click()
     })
 
@@ -27,7 +27,7 @@ describe('Note app', function () {
 
         cy.contains('test user logged in')
     })
-    describe('when logged in', function () {
+    describe('when logged in', function() {
         beforeEach(function() {
             cy.login({ username: 'test', password: 'test' })
         })
@@ -39,20 +39,20 @@ describe('Note app', function () {
             cy.contains('a note created by cypress')
         })
 
-        describe('and a note exists', function () {
-            beforeEach(function () {
+        describe('and a note exists', function() {
+            beforeEach(function() {
                 cy.createNote({ content: 'first note', important: false })
                 cy.createNote({ content: 'second note', important: false })
                 cy.createNote({ content: 'third note', important: false })
             })
 
-            it('it can be made important', function () {
+            it('it can be made important', function() {
                 cy.contains('second note').parent().find('button').as('theButton')
                 cy.get('@theButton').click()
                 cy.get('@theButton').should('contain', 'make not important')
             })
 
-            it('it can be made not important', function () {
+            it('it can be made not important', function() {
                 cy.contains('second note').parent().find('button').as('theButton')
                 cy.get('@theButton').click()
                 cy.get('@theButton').should('contain', 'make not important')
