@@ -1,6 +1,7 @@
 {
   "dependencies": {
-    "prop-types": "^15.8.1"
+    "prop-types": "^15.8.1",
+    "redux": "^4.2.0"
   },
   "devDependencies": {
     "eslint-plugin-jest": "^27.1.6"
