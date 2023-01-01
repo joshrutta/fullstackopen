@@ -5,9 +5,16 @@ import App from './App';
 
 import { Provider } from 'react-redux'
 import noteReducer from './reducers/noteReducer';
-import { createStore } from 'redux'
+import { configureStore } from '@reduxjs/toolkit'
+import filterReducer from './reducers/filterReducer';
 
-const store = createStore(noteReducer)
+
+const store = configureStore({
+  reducer: {
+    notes: noteReducer,
+    filter: filterReducer
+  }
+})
 
 store.dispatch({
   type: 'NEW_NOTE',
@@ -22,7 +29,7 @@ store.dispatch({
   type: 'NEW_NOTE',
   data: {
     content: 'state changes are made with actions',
-    important: false,
+    important: true,
     id: 2
   }
 })
@@ -34,12 +41,19 @@ store.dispatch({
   }
 })
 
+console.log(store.getState())
+
 const root = ReactDOM.createRoot(document.getElementById('root'))
 const renderApp = () => root.render(
   <Provider store={store}>
     <App />
   </Provider>
+  // <div />
 )
+
+// store.subscribe(() => console.log(store.getState()))
+// store.dispatch(filterChange('IMPORTANT'))
+// store.dispatch(createNote('combineReducers forms one reducer from many simple reducers'))
 
 renderApp()
 store.subscribe(renderApp)
