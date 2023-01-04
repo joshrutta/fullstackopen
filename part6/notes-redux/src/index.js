@@ -4,10 +4,10 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 
 import { Provider } from 'react-redux'
-import noteReducer from './reducers/noteReducer';
+import noteReducer, { setNotes } from './reducers/noteReducer';
 import { configureStore } from '@reduxjs/toolkit'
 import filterReducer from './reducers/filterReducer';
-
+import noteService from './services/notes'
 
 const store = configureStore({
   reducer: {
@@ -16,32 +16,7 @@ const store = configureStore({
   }
 })
 
-store.dispatch({
-  type: 'NEW_NOTE',
-  data: {
-    content: 'the app state is in redux store',
-    important: true,
-    id: 1
-  }
-})
-
-store.dispatch({
-  type: 'NEW_NOTE',
-  data: {
-    content: 'state changes are made with actions',
-    important: true,
-    id: 2
-  }
-})
-
-store.dispatch({
-  type: 'TOGGLE_IMPORTANCE',
-  data: {
-    id: 2
-  }
-})
-
-console.log(store.getState())
+noteService.getAll().then(notes => store.dispatch(setNotes(notes)))
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 const renderApp = () => root.render(
