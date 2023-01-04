@@ -4,10 +4,9 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 
 import { Provider } from 'react-redux'
-import noteReducer, { setNotes } from './reducers/noteReducer';
+import noteReducer from './reducers/noteReducer';
 import { configureStore } from '@reduxjs/toolkit'
 import filterReducer from './reducers/filterReducer';
-import noteService from './services/notes'
 
 const store = configureStore({
   reducer: {
@@ -15,8 +14,6 @@ const store = configureStore({
     filter: filterReducer
   }
 })
-
-noteService.getAll().then(notes => store.dispatch(setNotes(notes)))
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 const renderApp = () => root.render(
