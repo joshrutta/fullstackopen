@@ -6,16 +6,17 @@ import BlogForm from "./components/BlogForm";
 import Togglable from "./components/Togglable";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
-// import { notify } from "./reducers/notificationReducer";
+import { notify } from "./reducers/notificationReducer";
+import { useDispatch } from "react-redux";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [messageType, setMessageType] = useState("");
-  const [message, setMessage] = useState(null);
   const [user, setUser] = useState(null);
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogAppUser");
@@ -52,11 +53,7 @@ const App = () => {
       setUsername("");
       setPassword("");
     } catch (exception) {
-      setMessageType("error");
-      setMessage("Wrong username or password");
-      setTimeout(() => {
-        setMessage(null);
-      }, 5000);
+      dispatch(notify("error", "Wrong username or password", 5));
     }
   };
 
@@ -77,19 +74,15 @@ const App = () => {
       blogFormRef.current.toggleVisibility();
       const newlyAddedBlog = await blogService.create(blogObject);
       setBlogs(blogs.concat(newlyAddedBlog));
-      setMessage(
-        `a new blog "${blogObject.title}" by ${blogObject.author} added`
+      dispatch(
+        notify(
+          "success",
+          `a new blog "${blogObject.title}" by ${blogObject.author} added`,
+          5
+        )
       );
-      setMessageType("success");
-      setTimeout(() => {
-        setMessage(null);
-      }, 5000);
     } catch (exception) {
-      setMessageType("error");
-      setMessage("Error adding new blog");
-      setTimeout(() => {
-        setMessage(null);
-      }, 5000);
+      dispatch(notify("error", "Error adding new blog", 5));
     }
   };
 
@@ -103,19 +96,15 @@ const App = () => {
       try {
         await blogService.remove(blogId);
         setBlogs(blogs.filter((blog) => blog.id !== blogId));
-        setMessage(
-          `a blog "${blogToBeDeleted.title}" by ${blogToBeDeleted.author} was deleted`
+        dispatch(
+          notify(
+            "success",
+            `a blog "${blogToBeDeleted.title}" by ${blogToBeDeleted.author} was deleted`,
+            5
+          )
         );
-        setMessageType("success");
-        setTimeout(() => {
-          setMessage(null);
-        }, 5000);
       } catch (exception) {
-        setMessageType("error");
-        setMessage("Error deleting blog");
-        setTimeout(() => {
-          setMessage(null);
-        }, 5000);
+        dispatch(notify("error", "Error deleting blog", 5));
       }
     }
   };
@@ -139,11 +128,7 @@ const App = () => {
       blogsCopy.sort((b1, b2) => (b1.likes < b2.likes ? 1 : -1));
       setBlogs(blogsCopy);
     } catch (exception) {
-      setMessageType("error");
-      setMessage("Error liking blog");
-      setTimeout(() => {
-        setMessage(null);
-      }, 5000);
+      dispatch(notify("error", "Error liking blog", 5));
     }
   };
 
@@ -157,7 +142,7 @@ const App = () => {
 
   return (
     <div>
-      <Notification messageType={messageType} message={message} />
+      <Notification />
       <h2>Blogs</h2>
       {user === null ? (
         loginForm()
