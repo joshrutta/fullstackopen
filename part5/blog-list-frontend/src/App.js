@@ -7,10 +7,11 @@ import Togglable from "./components/Togglable";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import { notify } from "./reducers/notificationReducer";
-import { useDispatch } from "react-redux";
+import { initializeBlogs } from "./reducers/blogReducer";
+import { useDispatch, useSelector } from "react-redux";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
+  const blogs = useSelector((state) => state.blogs);
   const [user, setUser] = useState(null);
 
   const [username, setUsername] = useState("");
@@ -28,13 +29,8 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => {
-      blogs.sort((b1, b2) => (b1.likes < b2.likes ? 1 : -1));
-      const blogsToRender = blogs.filter((blog) => blog.user); //.filter(blog => blog.user === user.id)
-      setBlogs(blogsToRender);
-      // setBlogs(blogs)
-    });
-  }, []);
+    dispatch(initializeBlogs());
+  }, [dispatch]);
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -72,8 +68,8 @@ const App = () => {
   const createNewBlog = async (blogObject) => {
     try {
       blogFormRef.current.toggleVisibility();
-      const newlyAddedBlog = await blogService.create(blogObject);
-      setBlogs(blogs.concat(newlyAddedBlog));
+      // const newlyAddedBlog = await blogService.create(blogObject);
+      // setBlogs(blogs.concat(newlyAddedBlog));
       dispatch(
         notify(
           "success",
@@ -95,7 +91,7 @@ const App = () => {
     ) {
       try {
         await blogService.remove(blogId);
-        setBlogs(blogs.filter((blog) => blog.id !== blogId));
+        // setBlogs(blogs.filter((blog) => blog.id !== blogId));
         dispatch(
           notify(
             "success",
@@ -126,7 +122,7 @@ const App = () => {
       var blogsCopy = blogs.filter((blog) => blog.id !== blogId);
       blogsCopy = blogsCopy.concat(responseBlog);
       blogsCopy.sort((b1, b2) => (b1.likes < b2.likes ? 1 : -1));
-      setBlogs(blogsCopy);
+      // setBlogs(blogsCopy);
     } catch (exception) {
       dispatch(notify("error", "Error liking blog", 5));
     }
