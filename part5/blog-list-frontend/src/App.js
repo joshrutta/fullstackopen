@@ -65,23 +65,6 @@ const App = () => {
     </Togglable>
   );
 
-  const createNewBlog = async (blogObject) => {
-    try {
-      blogFormRef.current.toggleVisibility();
-      // const newlyAddedBlog = await blogService.create(blogObject);
-      // setBlogs(blogs.concat(newlyAddedBlog));
-      dispatch(
-        notify(
-          "success",
-          `a new blog "${blogObject.title}" by ${blogObject.author} added`,
-          5
-        )
-      );
-    } catch (exception) {
-      dispatch(notify("error", "Error adding new blog", 5));
-    }
-  };
-
   const handleDeleteBlog = async (event, blogId) => {
     const blogToBeDeleted = blogs.filter((blog) => blog.id === blogId)[0];
     if (
@@ -132,7 +115,7 @@ const App = () => {
 
   const createNewBlogForm = () => (
     <Togglable buttonLabel="new blog" ref={blogFormRef}>
-      <BlogForm createNewBlog={createNewBlog} />
+      <BlogForm />
     </Togglable>
   );
 

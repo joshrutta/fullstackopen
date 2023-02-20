@@ -1,17 +1,34 @@
 import { useState } from "react";
+import { createBlog } from "../reducers/blogReducer";
+import { notify } from "../reducers/notificationReducer";
+import { useDispatch } from "react-redux";
 
-const BlogForm = ({ createNewBlog }) => {
+// eslint-disable-next-line no-unused-vars
+const BlogForm = () => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
 
+  const dispatch = useDispatch();
+
   const addBlog = async (event) => {
     event.preventDefault();
-    await createNewBlog({
-      title,
-      author,
-      url,
-    });
+    try {
+      await dispatch(
+        createBlog({
+          title,
+          author,
+          url,
+        })
+      );
+      dispatch(
+        notify("success", `a new blog "${title}" by ${author} added`, 5)
+      );
+    } catch (exception) {
+      dispatch(
+        notify("error", `Error adding new blog: ${exception.message}`, 5)
+      );
+    }
 
     setTitle("");
     setAuthor("");
