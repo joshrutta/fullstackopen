@@ -65,28 +65,6 @@ const App = () => {
     </Togglable>
   );
 
-  const handleDeleteBlog = async (event, blogId) => {
-    const blogToBeDeleted = blogs.filter((blog) => blog.id === blogId)[0];
-    if (
-      window.confirm(
-        `Remove "${blogToBeDeleted.title}" by ${blogToBeDeleted.author}?`
-      )
-    ) {
-      try {
-        await blogService.remove(blogId);
-        // setBlogs(blogs.filter((blog) => blog.id !== blogId));
-        dispatch(
-          notify(
-            "success",
-            `a blog "${blogToBeDeleted.title}" by ${blogToBeDeleted.author} was deleted`,
-            5
-          )
-        );
-      } catch (exception) {
-        dispatch(notify("error", "Error deleting blog", 5));
-      }
-    }
-  };
 
   const handleLike = async (event, blogId) => {
     try {
@@ -135,7 +113,6 @@ const App = () => {
             <Blog
               key={blog.id}
               blog={blog}
-              handleDeleteBlog={(event) => handleDeleteBlog(event, blog.id)}
               handleLike={(event) => handleLike(event, blog.id)}
             />
           ))}

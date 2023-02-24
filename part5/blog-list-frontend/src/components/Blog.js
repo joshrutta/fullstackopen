@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { deleteBlog } from "../reducers/blogReducer";
+import { notify } from "../reducers/notificationReducer";
 
-const Blog = ({ blog, handleDeleteBlog, handleLike }) => {
+const Blog = ({ blog, handleLike }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -9,6 +12,8 @@ const Blog = ({ blog, handleDeleteBlog, handleLike }) => {
     marginBottom: 5,
   };
 
+  const dispatch = useDispatch();
+
   const [visible, setVisible] = useState(false);
 
   const hideWhenVisible = { display: visible ? "none" : "" };
@@ -16,6 +21,28 @@ const Blog = ({ blog, handleDeleteBlog, handleLike }) => {
 
   const toggleExpand = () => {
     setVisible(!visible);
+  };
+
+  const removeBlog = async (event) => {
+    event.preventDefault();
+    if (
+      window.confirm(
+        `Remove "${blog.title}" by ${blog.author}?`
+      )
+    ) {
+      try {
+        await dispatch(
+          deleteBlog(blog)
+        );
+        dispatch(
+          notify("success", `a blog "${blog.title}" by ${blog.author} was deleted`, 5)
+        );
+      } catch (exception) {
+        dispatch(
+          notify("error", `Error deleting blog: ${exception.message}`, 5)
+        );
+      }
+    }
   };
 
   return (
@@ -55,7 +82,7 @@ const Blog = ({ blog, handleDeleteBlog, handleLike }) => {
           </button>
         </div>
         <div data-testid="blog-author">{blog.author}</div>
-        <button id="remove-button" onClick={handleDeleteBlog}>
+        <button id="remove-button" onClick={removeBlog}>
           remove
         </button>
       </div>
