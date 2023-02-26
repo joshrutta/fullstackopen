@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { deleteBlog } from "../reducers/blogReducer";
+import { deleteBlog, likeBlog } from "../reducers/blogReducer";
 import { notify } from "../reducers/notificationReducer";
 
-const Blog = ({ blog, handleLike }) => {
+const Blog = ({ blog }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -45,6 +45,11 @@ const Blog = ({ blog, handleLike }) => {
     }
   };
 
+  const handleLike2 = async (event) => {
+    event.preventDefault();
+    await dispatch(likeBlog(blog));
+  };
+
   return (
     <div>
       <div
@@ -75,7 +80,7 @@ const Blog = ({ blog, handleLike }) => {
           likes {blog.likes}{" "}
           <button
             id="like-button"
-            onClick={handleLike}
+            onClick={handleLike2}
             data-testid="like-button"
           >
             like

@@ -65,30 +65,6 @@ const App = () => {
     </Togglable>
   );
 
-
-  const handleLike = async (event, blogId) => {
-    try {
-      const blogToBeUpdated = blogs.filter((blog) => blog.id === blogId)[0];
-      const updatedBlog = {
-        ...blogToBeUpdated,
-        user: blogToBeUpdated.user._id,
-        likes: blogToBeUpdated.likes + 1,
-      };
-      // eslint-disable-next-line no-unused-vars
-      const { _id, ...updatedBlogExcludingId } = updatedBlog;
-      const responseBlog = await blogService.update(
-        blogId,
-        updatedBlogExcludingId
-      );
-      var blogsCopy = blogs.filter((blog) => blog.id !== blogId);
-      blogsCopy = blogsCopy.concat(responseBlog);
-      blogsCopy.sort((b1, b2) => (b1.likes < b2.likes ? 1 : -1));
-      // setBlogs(blogsCopy);
-    } catch (exception) {
-      dispatch(notify("error", "Error liking blog", 5));
-    }
-  };
-
   const blogFormRef = useRef();
 
   const createNewBlogForm = () => (
@@ -113,7 +89,6 @@ const App = () => {
             <Blog
               key={blog.id}
               blog={blog}
-              handleLike={(event) => handleLike(event, blog.id)}
             />
           ))}
 
